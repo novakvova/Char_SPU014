@@ -7,19 +7,32 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="362" Width="827" FontSize="16pt" Closing="Window_Closing">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="560*"/>
+            <ColumnDefinition Width="267*"/>
+        </Grid.ColumnDefinitions>
         <Label Content="Повідомлення" HorizontalAlignment="Left" Margin="28,6,0,0" VerticalAlignment="Top"/>
         <TextBox Name="txtText" Text="Привіт!" HorizontalAlignment="Left" Margin="28,44,0,0"  TextWrapping="Wrap" VerticalAlignment="Top" Width="387"/>
 
         <Button Content="Надіслати" Name="bntSend" HorizontalAlignment="Left" Margin="441,39,0,0" VerticalAlignment="Top" 
-                RenderTransformOrigin="-0.261,0.222" Height="40" Width="128" Click="bntSend_Click"/>
-        <ListBox Name="lbInfo" HorizontalAlignment="Left" Margin="28,131,0,43"  Width="387"/>
+                RenderTransformOrigin="-0.261,0.222" Height="40" Width="128" Click="bntSend_Click" Grid.ColumnSpan="2"/>
+        <ListBox Name="lbInfo" HorizontalAlignment="Left" Margin="28,131,0,43"  Width="387">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:MessageView}">
+                    <WrapPanel>
+                        <ContentControl Margin="3" Content="{Binding Image}" Width="50" />
+                        <TextBlock Margin="3" Text="{Binding Text}" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <Label Content="Ім'я" HorizontalAlignment="Left" Margin="446,144,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="txtUserName" HorizontalAlignment="Left" Margin="454,187,0,0" Text="Іван" TextWrapping="Wrap" VerticalAlignment="Top" Width="343"/>
+        <TextBox Name="txtUserName" HorizontalAlignment="Left" Margin="454,187,0,0" Text="Іван" TextWrapping="Wrap" VerticalAlignment="Top" Width="343" Grid.ColumnSpan="2"/>
 
-        <Button Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="669,241,0,0" VerticalAlignment="Top" Height="46" Width="128" Click="btnConnect_Click"/>
-        <Button Content="Select Avatar" HorizontalAlignment="Left" Height="46" Margin="454,241,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click"/>
-        <Image Name="Avatar" HorizontalAlignment="Left" Height="120" Margin="603,39,0,0" VerticalAlignment="Top" Width="129" Source="/images/not-found.png"/>
+        <Button Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="109,241,0,0" VerticalAlignment="Top" Height="46" Width="128" Click="btnConnect_Click" Grid.Column="1"/>
+        <Button Content="Select Avatar" HorizontalAlignment="Left" Height="46" Margin="454,241,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click" Grid.ColumnSpan="2"/>
+        <Image Name="Avatar" HorizontalAlignment="Left" Height="120" Margin="43,39,0,0" VerticalAlignment="Top" Width="129" Source="/images/not-found.png" Grid.Column="1"/>
 
     </Grid>
 </Window>

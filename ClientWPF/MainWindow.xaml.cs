@@ -54,7 +54,8 @@ namespace ClientWPF
                 _message.UserId=Guid.NewGuid().ToString(); //вказуємо ідентифікатор
                 client.Connect(ip, port); //конектимося до сервера
                 //Повідомлення про успішне підключення
-                lbInfo.Items.Add($"Підключаємося до сервера {ip.ToString()}:{port}"); 
+                _message.Text = $"Підключаємося до сервера {ip.ToString()}:{port}";
+                ShowMessage(_message); 
                 //Отримуємо потік даних від сервера
                 ns = client.GetStream();
                 //Запускаємо другорядний потік для оримання повідомлень від сервера
@@ -79,34 +80,19 @@ namespace ClientWPF
             int byte_count; //розмір масиву байт
             while((byte_count=ns.Read(recivedBytes,0,recivedBytes.Length))>0) //читаємо повідомлення від сервер
             {
-                ChatMessage message = ChatMessage.Deserialize(recivedBytes);
+                
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     try
                     {
-                        
-                        switch(message.MessageType)
+                        ChatMessage message = ChatMessage.Deserialize(recivedBytes);
+                        switch (message.MessageType)
                         {
                             case TypeMessage.Login:
                                 {
                                     if (message.UserId != _message.UserId)
                                     {
-                                        lbInfo.Items.Add(message.UserName + ":" + message.Text);
-                                        var imageSource = new BitmapImage();
-                                        using (var bmpStream = new MemoryStream(message.Image, 0, message.ImageSize))
-                                        {
-                                            imageSource.BeginInit();
-                                            imageSource.StreamSource = bmpStream;
-                                            imageSource.CacheOption = BitmapCacheOption.OnLoad;
-                                            imageSource.EndInit();
-                                        }
-
-                                        imageSource.Freeze(); // here
-
-                                        if (Avatar.Dispatcher.CheckAccess())
-                                        {
-                                            Avatar.Source = imageSource;
-                                        }
+                                        ShowMessage(message); 
                                     }
                                     break;
                                 }
@@ -114,13 +100,13 @@ namespace ClientWPF
                                 {
                                     if (message.UserId != _message.UserId)
                                     {
-                                        lbInfo.Items.Add(message.UserName + ":" + message.Text);
+                                        ShowMessage(message);
                                     }
                                     break;
                                 }
                             case TypeMessage.Message:
                                 {
-                                    lbInfo.Items.Add(message.UserName + ":" + message.Text);
+                                    ShowMessage(message);
                                     break;
                                 }
                         }
@@ -133,6 +119,24 @@ namespace ClientWPF
                     }
                 }));
             }
+        }
+
+        private void ShowMessage(ChatMessage message)
+        {
+            var imageSource = new BitmapImage();
+            using (var bmpStream = new MemoryStream(message.Image, 0, message.ImageSize))
+            {
+                imageSource.BeginInit();
+                imageSource.StreamSource = bmpStream;
+                imageSource.CacheOption = BitmapCacheOption.OnLoad;
+                imageSource.EndInit();
+            }
+
+            imageSource.Freeze(); // here
+
+            Image image = new Image();
+            image.Source = imageSource;
+            lbInfo.Items.Add(new MessageView { Image = image, Text = message.UserName + ":" + message.Text });
         }
         //подія закриття вікна
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
