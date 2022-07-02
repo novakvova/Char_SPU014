@@ -36,6 +36,16 @@ namespace ClientWPF
 
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
+            if(_message.ImageSize==0)
+            {
+                MessageBox.Show("Оберіть фото!");
+                return;
+            }
+            if (string.IsNullOrEmpty(txtUserName.Text))
+            {
+                MessageBox.Show("Вкажіть ім'я!");
+                return;
+            }
             try
             {
                 string fileName = "setting.txt";  //файл із налаштуванями
